@@ -2,53 +2,25 @@ package config
 
 import (
 	"errors"
-	"log"
-	"time"
-
 	"github.com/spf13/viper"
+	"log"
 )
 
 // Config is an app config struct
 type Config struct {
 	Server  ServerConfig
 	MongoDB MongoDB
-	//Metrics  Metrics
-	Logger Logger
 }
 
 // ServerConfig is a config struct
 type ServerConfig struct {
-	AppVersion        string
-	Port              string
-	Mode              string
-	ReadTimeout       time.Duration
-	WriteTimeout      time.Duration
-	CtxDefaultTimeout time.Duration
-	Debug             bool
-}
-
-// Logger config
-type Logger struct {
-	Development       bool
-	DisableCaller     bool
-	DisableStacktrace bool
-	Encoding          string
-	Level             string
+	Port string
 }
 
 // MongoDB config
 type MongoDB struct {
 	MongoURI string
-
-	Database           string
-	ImageCollection    string
-	MetadataCollection string
-}
-
-// Metrics config
-type Metrics struct {
-	URL         string
-	ServiceName string
+	Database string
 }
 
 // LoadConfig loads config file from given path

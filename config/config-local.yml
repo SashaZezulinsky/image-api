@@ -1,0 +1,6 @@
+server:
+  Port: :5000
+
+mongodb:
+  MongoURI: mongodb://localhost:27017
+  Database: test

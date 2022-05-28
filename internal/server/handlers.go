@@ -1,28 +1,29 @@
 package server
 
 import (
-	"github.com/AleksK1NG/api-mc/pkg/utils"
+	"log"
+	"net/http"
+
+	"github.com/labstack/echo/v4"
+
 	imageHttp "github.com/image-api/internal/image/delivery/http"
 	imageRepo "github.com/image-api/internal/image/repository/mongodb"
 	imageUsecase "github.com/image-api/internal/image/usecase"
-	metadataRepo "github.com/image-api/internal/metadata/repository/mongodb"
-	metadataUsecase "github.com/image-api/internal/metadata/usecase"
-	"github.com/labstack/echo/v4"
-	"net/http"
+	"github.com/image-api/pkg/utils"
 )
 
 // Map Server Handlers
 func (s *Server) MapHandlers(e *echo.Echo) error {
 	// Init repositories
-	iRepo := imageRepo.NewMongoDBImageRepository(s.mongoDB, s.logger)
-	mRepo := metadataRepo.NewMongoDBMetadataRepository(s.mongoDB, s.logger)
-
+	iRepo, err := imageRepo.NewMongoDBImageRepository(s.mongoDB, s.cfg.MongoDB.Database)
+	if err != nil {
+		return err
+	}
 	// Init useCases
-	imageUC := imageUsecase.NewImageUsecase(iRepo, mRepo, s.logger)
-	metadataUC := metadataUsecase.NewMetadataUsecase(mRepo, s.logger)
+	imageUC := imageUsecase.NewImageUsecase(iRepo)
 
 	// Init handlers
-	imagesHandlers := imageHttp.NewImageHandler(imageUC, metadataUC, s.logger)
+	imagesHandlers := imageHttp.NewImageHandler(imageUC)
 
 	v1 := e.Group("/v1")
 
@@ -32,7 +33,7 @@ func (s *Server) MapHandlers(e *echo.Echo) error {
 	imageHttp.MapImageRoutes(imageGroup, imagesHandlers)
 
 	health.GET("", func(c echo.Context) error {
-		s.logger.Infof("Health check RequestID: %s", utils.GetRequestID(c))
+		log.Printf("Health check RequestID: %s\n", utils.GetRequestID(c))
 		return c.JSON(http.StatusOK, map[string]string{"status": "OK"})
 	})
 

@@ -2,17 +2,17 @@ package server
 
 import (
 	"context"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/image-api/config"
-	"github.com/image-api/pkg/logger"
-	"github.com/labstack/echo/v4"
 )
 
 const (
@@ -25,12 +25,11 @@ type Server struct {
 	echo    *echo.Echo
 	cfg     *config.Config
 	mongoDB *mongo.Client
-	logger  logger.Logger
 }
 
 // NewServer New Server constructor
-func NewServer(cfg *config.Config, mongoDB *mongo.Client, logger logger.Logger) *Server {
-	return &Server{echo: echo.New(), cfg: cfg, mongoDB: mongoDB, logger: logger}
+func NewServer(cfg *config.Config, mongoDB *mongo.Client) *Server {
+	return &Server{echo: echo.New(), cfg: cfg, mongoDB: mongoDB}
 }
 
 func (s *Server) Run() error {
@@ -42,14 +41,14 @@ func (s *Server) Run() error {
 	}
 
 	go func() {
-		s.logger.Infof("Server is listening on PORT: %s", s.cfg.Server.Port)
+		log.Printf("Server is listening on PORT: %s\n", s.cfg.Server.Port)
 		if err := s.echo.StartServer(server); err != nil {
-			s.logger.Fatalf("Error starting Server: ", err)
+			log.Fatalln("Error starting Server: ", err)
 		}
 	}()
 
 	s.echo.HTTPErrorHandler = func(err error, c echo.Context) {
-		s.logger.Errorw("Error on request", "Path", c.Path(), "Params", c.QueryParams(), "Err", err)
+		log.Println("Error on request", "Path", c.Path(), "Params", c.QueryParams(), "Err", err)
 		s.echo.DefaultHTTPErrorHandler(err, c)
 	}
 
@@ -65,6 +64,6 @@ func (s *Server) Run() error {
 	ctx, shutdown := context.WithTimeout(context.Background(), ctxTimeout*time.Second)
 	defer shutdown()
 
-	s.logger.Info("Server Exited Properly")
+	log.Println("Server Exited Properly")
 	return s.echo.Server.Shutdown(ctx)
 }

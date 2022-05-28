@@ -2,17 +2,16 @@ package main
 
 import (
 	"context"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"math/rand"
 	"os"
 	"time"
 
-	"github.com/image-api/internal/server"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/image-api/config"
-	"github.com/image-api/pkg/logger"
+	"github.com/image-api/internal/server"
 	"github.com/image-api/pkg/utils"
 )
 
@@ -33,11 +32,6 @@ func main() {
 		log.Fatalf("ParseConfig: %v", err)
 	}
 
-	appLogger := logger.NewApiLogger(cfg)
-
-	appLogger.InitLogger()
-	appLogger.Infof("AppVersion: %s, LogLevel: %s, Mode: %s", cfg.Server.AppVersion, cfg.Logger.Level, cfg.Server.Mode)
-
 	mongoClient, err := mongo.Connect(context.Background(), options.Client().ApplyURI(cfg.MongoDB.MongoURI))
 	if err != nil {
 		log.Fatalf("ParseConfig: %v", err)
@@ -49,7 +43,7 @@ func main() {
 		}
 	}()
 
-	s := server.NewServer(cfg, mongoClient, appLogger)
+	s := server.NewServer(cfg, mongoClient)
 	if err = s.Run(); err != nil {
 		log.Fatal(err)
 	}
