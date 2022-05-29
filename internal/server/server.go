@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/image-api/config"
+	"image-api/config"
 )
 
 const (
@@ -20,14 +20,12 @@ const (
 	ctxTimeout     = 5
 )
 
-// Server struct
 type Server struct {
 	echo    *echo.Echo
 	cfg     *config.Config
 	mongoDB *mongo.Client
 }
 
-// NewServer New Server constructor
 func NewServer(cfg *config.Config, mongoDB *mongo.Client) *Server {
 	return &Server{echo: echo.New(), cfg: cfg, mongoDB: mongoDB}
 }
@@ -35,8 +33,8 @@ func NewServer(cfg *config.Config, mongoDB *mongo.Client) *Server {
 func (s *Server) Run() error {
 	server := &http.Server{
 		Addr:           s.cfg.Server.Port,
-		ReadTimeout:    time.Second * s.cfg.Server.ReadTimeout,
-		WriteTimeout:   time.Second * s.cfg.Server.WriteTimeout,
+		ReadTimeout:    time.Second * 5,
+		WriteTimeout:   time.Second * 5,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
 

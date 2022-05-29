@@ -11,9 +11,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/image-api/internal/domain"
-	errs "github.com/image-api/pkg/errors"
-	"github.com/image-api/pkg/utils"
+	"image-api/internal/domain"
+	errs "image-api/pkg/errors"
+	"image-api/pkg/utils"
 )
 
 type imageUsecase struct {

@@ -10,9 +10,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/image-api/config"
-	"github.com/image-api/internal/server"
-	"github.com/image-api/pkg/utils"
+	"image-api/config"
+	"image-api/internal/server"
+	"image-api/pkg/utils"
 )
 
 func main() {

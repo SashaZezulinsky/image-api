@@ -8,8 +8,8 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"github.com/image-api/internal/domain"
-	"github.com/image-api/pkg/errors"
+	"image-api/internal/domain"
+	"image-api/pkg/errors"
 )
 
 type imageHandler struct {
@@ -34,7 +34,11 @@ func (h *imageHandler) ListMetadata() echo.HandlerFunc {
 
 func (h *imageHandler) GetMetadata() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id := c.Param("id")
+		id, err := getIDParam(c)
+		if err != nil {
+			return err
+		}
+
 		metadata, err := h.ImageUsecase.GetMetadata(context.Background(), id)
 		switch err {
 		case errors.ErrNotFound, errors.ErrBadID:
@@ -49,7 +53,11 @@ func (h *imageHandler) GetMetadata() echo.HandlerFunc {
 
 func (h *imageHandler) Get() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		id := c.Param("id")
+		id, err := getIDParam(c)
+		if err != nil {
+			return err
+		}
+
 		imageBytes, err := h.ImageUsecase.Get(context.Background(), id)
 		contentType := http.DetectContentType(imageBytes)
 		switch err {
@@ -86,7 +94,10 @@ func (h *imageHandler) Add() echo.HandlerFunc {
 func (h *imageHandler) Update() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := context.Background()
-		id := c.Param("id")
+		id, err := getIDParam(c)
+		if err != nil {
+			return err
+		}
 
 		image, err := ioutil.ReadAll(c.Request().Body)
 		if err != nil {
@@ -103,4 +114,16 @@ func (h *imageHandler) Update() echo.HandlerFunc {
 			return err
 		}
 	}
+}
+
+func getIDParam(c echo.Context) (string, error) {
+	id := c.Param("id")
+	if id == "" {
+		params, err := c.FormParams()
+		if err != nil {
+			return "", err
+		}
+		id = params.Get("id")
+	}
+	return id, nil
 }

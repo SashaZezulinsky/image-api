@@ -2,28 +2,24 @@ package config
 
 import (
 	"errors"
-	"github.com/spf13/viper"
 	"log"
+	"github.com/spf13/viper"
 )
 
-// Config is an app config struct
 type Config struct {
 	Server  ServerConfig
 	MongoDB MongoDB
 }
 
-// ServerConfig is a config struct
 type ServerConfig struct {
 	Port string
 }
 
-// MongoDB config
 type MongoDB struct {
 	MongoURI string
 	Database string
 }
 
-// LoadConfig loads config file from given path
 func LoadConfig(filename string) (*viper.Viper, error) {
 	v := viper.New()
 
@@ -40,7 +36,6 @@ func LoadConfig(filename string) (*viper.Viper, error) {
 	return v, nil
 }
 
-// ParseConfig parses config file
 func ParseConfig(v *viper.Viper) (*Config, error) {
 	var c Config
 

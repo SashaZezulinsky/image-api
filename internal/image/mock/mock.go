@@ -8,7 +8,7 @@ import (
 	context "context"
 	reflect "reflect"
 
-	domain "github.com/image-api/internal/domain"
+	domain "image-api/internal/domain"
 	gomock "github.com/golang/mock/gomock"
 	echo "github.com/labstack/echo/v4"
 )

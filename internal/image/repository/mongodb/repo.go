@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+
 	"github.com/fatih/structs"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -11,8 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	"github.com/image-api/internal/domain"
-	errs "github.com/image-api/pkg/errors"
+	"image-api/internal/domain"
+	errs "image-api/pkg/errors"
 )
 
 type mongoDBRepo struct {
